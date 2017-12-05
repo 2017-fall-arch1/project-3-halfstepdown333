@@ -32,12 +32,12 @@ Layer fieldLayer = {		/* playing field as a layer */
   (AbShape *) &fieldOutline,
   {screenWidth/2, screenHeight/2},/**< center */
   {0,0}, {0,0},				    /* last & next pos */
-  COLOR_BLACK,
+  COLOR_BLUE,
   &layer4
 };
 
 Layer layer1 = {	       
-  (AbShape *)&pong1,
+  (AbShape *)&left,
   {(screenWidth/2)-48, (screenHeight/2)-51}, /**< center */
   {0,0}, {0,0},				    /* last & next pos */
   COLOR_RED,
@@ -45,7 +45,7 @@ Layer layer1 = {
 };
 
 Layer layer0 = {		
-  (AbShape *)&pong2,
+  (AbShape *)&right,
   {(screenWidth/2)+48, (screenHeight/2)+51}, /**< bit below & right of center */
   {0,0}, {0,0},				    /* last & next pos */
   COLOR_RED,
@@ -139,7 +139,7 @@ void mlAdvance(MovLayer *ml, Region *fence)
       if (shapeBoundary.topLeft.axes[axis] < fence->topLeft.axes[axis]) {
 	  int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
 	newPos.axes[axis] += (2*velocity);
-	}	/**< if outside of fence */
+	
 	if(ml->layer->abShape == ml0.layer->abShape & (c < 1)){
 	pong1 +=1;
 	c +=1;
@@ -163,7 +163,7 @@ void mlAdvance(MovLayer *ml, Region *fence)
   }
 }
 
-u_int bgColor = COLOR_BLUE;     /**< The background color */
+u_int bgColor = COLOR_BLACK;     /**< The background color */
 int redrawScreen = 1;           /**< Boolean for whether screen needs to be redrawn */
 
 Region fieldFence;		/**< fence around playing field  */
@@ -197,9 +197,11 @@ void main()
       or_sr(0x10);	      /**< CPU OFF */
     }
     if(pong1)
-      drawChar5x7(59,0,'0'+ pong2,COLOR_BLUE, COLOR_WHITE);
+      drawChar5x7(0,152,'0'+ pong2,COLOR_WHITE, COLOR_BLACK);
+
     if(pong2)
-      drawChar5x7(63,152,'0'+ pong1,COLOR_BLUE, COLOR_WHITE);
+      drawChar5x7(63,152,'0'+ pong1,COLOR_WHITE, COLOR_BLACK);
+
     P1OUT |= GREEN_LED;       /**< Green led on when CPU on */
     redrawScreen = 0;
     movLayerDraw(&ml2, &layer0);
