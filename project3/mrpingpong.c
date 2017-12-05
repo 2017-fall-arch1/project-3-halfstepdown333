@@ -11,8 +11,8 @@
 char pong1=0;
 char pong2=0;
 
-AbRect left = {abRectGetBounds, abRectCheck,{5,18}}; 
-AbRect right = {abRectGetBounds, abRectCheck,{5,18}};
+AbRect left = {abRectGetBounds, abRectCheck,{2,15}}; 
+AbRect right = {abRectGetBounds, abRectCheck,{2,15}};
 
 AbRectOutline fieldOutline = {	/* playing field */
   abRectOutlineGetBounds, abRectOutlineCheck,   
@@ -20,7 +20,7 @@ AbRectOutline fieldOutline = {	/* playing field */
 };
 
 Layer layer4 = {
-  (AbShape *) &circle8,
+  (AbShape *) &circle5,
   {(screenWidth/2)+10, (screenHeight/2)+5}, /**< bit below & right of center */
   {0,0}, {0,0},				    /* last & next pos */
   COLOR_PINK,
@@ -38,7 +38,7 @@ Layer fieldLayer = {		/* playing field as a layer */
 
 Layer layer1 = {	       
   (AbShape *)&left,
-  {(screenWidth/2)-48, (screenHeight/2)-51}, /**< center */
+  {(screenWidth/2)-51, (screenHeight/2)-51}, /**< center */
   {0,0}, {0,0},				    /* last & next pos */
   COLOR_RED,
   &fieldLayer,
@@ -46,7 +46,7 @@ Layer layer1 = {
 
 Layer layer0 = {		
   (AbShape *)&right,
-  {(screenWidth/2)+48, (screenHeight/2)+51}, /**< bit below & right of center */
+  {(screenWidth/2)+51, (screenHeight/2)+51}, /**< bit below & right of center */
   {0,0}, {0,0},				    /* last & next pos */
   COLOR_RED,
   &layer1,
@@ -134,7 +134,8 @@ void mlAdvance(MovLayer *ml, Region *fence)
   for (; ml; ml = ml->next) {
     vec2Add(&newPos, &ml->layer->posNext, &ml->velocity);
     abShapeGetBounds(ml->layer->abShape, &newPos, &shapeBoundary);
-    c,c2=0;
+    c =0;
+    c2=0;
     for (axis = 0; axis < 2; axis ++) {
       if (shapeBoundary.topLeft.axes[axis] < fence->topLeft.axes[axis]) {
 	  int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
@@ -197,7 +198,7 @@ void main()
       or_sr(0x10);	      /**< CPU OFF */
     }
     if(pong1)
-      drawChar5x7(0,152,'0'+ pong2,COLOR_WHITE, COLOR_BLACK);
+      drawChar5x7(60,0,'0'+ pong2,COLOR_WHITE, COLOR_BLACK);
 
     if(pong2)
       drawChar5x7(63,152,'0'+ pong1,COLOR_WHITE, COLOR_BLACK);
