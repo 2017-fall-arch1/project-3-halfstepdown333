@@ -8,9 +8,11 @@
 
 #define GREEN_LED BIT6
 
+char pong1=0;
+char pong2=0;
 
-AbRect pong1 = {abRectGetBounds, abRectCheck, {5,18}}; /**< 10x10 rectangle */
-AbRArrow pong2 = {abRArrowGetBounds, abRectCheck,{5,18}};
+AbRect left = {abRectGetBounds, abRectCheck,{5,18}}; 
+AbRect right = {abRectGetBounds, abRectCheck,{5,18}};
 
 AbRectOutline fieldOutline = {	/* playing field */
   abRectOutlineGetBounds, abRectOutlineCheck,   
@@ -62,16 +64,17 @@ typedef struct MovLayer_s {
 
 /* initial value of {0,0} will be overwritten */
 MovLayer ml0 = { &layer4, {3,3}, 0 }; /**< not all layers move */
-MovLayer ml1 = { &layer1, {0,0}, &ml0 }; 
+MovLayer mll = { &layer1, {0,0}, &ml0 }; 
 MovLayer ml2 = { &layer0, {0,0}, &mll }; 
 
 
-int returnBall(Vec2 * new, u_int x){
-  int velocity =0;
-    if(abShapeCheck(mll.layer->abShape,&mll.layer->posNext, new))
-      (abShapeCheck(ml2.layer->abshape,&ml2.layer->posNext,new)){
-	velocity = ml0.velocity.axes[x]= -ml0.velocity.axes[x];
-	return velocity;	}
+int returnBall(Vec2 *new, u_int x){
+  int velocity3 =0;
+    if(abShapeCheck(mll.layer->abShape,&mll.layer->posNext, new) ||
+       (abShapeCheck(ml2.layer->abShape,&ml2.layer->posNext,new))){
+	velocity3 = ml0.velocity.axes[x]= -ml0.velocity.axes[x];
+	return velocity3;
+}
 }
 
 
@@ -133,27 +136,27 @@ void mlAdvance(MovLayer *ml, Region *fence)
     abShapeGetBounds(ml->layer->abShape, &newPos, &shapeBoundary);
     c,c2=0;
     for (axis = 0; axis < 2; axis ++) {
-      if ((shapeBoundary.topLeft.axes[axis] < fence->topLeft.axes[axis]) {
+      if (shapeBoundary.topLeft.axes[axis] < fence->topLeft.axes[axis]) {
 	  int velocity = ml->velocity.axes[axis] = -ml->velocity.axes[axis];
 	newPos.axes[axis] += (2*velocity);
 	}	/**< if outside of fence */
 	if(ml->layer->abShape == ml0.layer->abShape & (c < 1)){
-	score+=1;
+	pong1 +=1;
 	c +=1;
       }
 	}
-      else if (shapeBoundary.botRight.axes[x] > fence->botright.axes[axis]){
-	int velocity = ml->velocity.axes[x]= -ml->velocity.axes[x];
-	new.axes[axis] +=(2*velocity);
+      else if(shapeBoundary.botRight.axes[axis] > fence->botRight.axes[axis]){
+	int velocity = ml->velocity.axes[axis]= -ml->velocity.axes[axis];
+	newPos.axes[axis] +=(2*velocity);
 	
 	if(ml->layer->abShape == ml0.layer->abShape & (c2 < 1)){
-	score2+=1;
+	pong2 +=1;
 	c2 +=1;
       }
       }
       if(ml->layer->abShape ==ml0.layer->abShape){
-	int velocity = returnBall(&new,x);
-	new.axes[x] +=(2*velocity);
+	int velocity = returnBall(&newPos,axis);
+	newPos.axes[axis] +=(2*velocity);
       }
       ml->layer->posNext = newPos;
     } /**< for ml */
@@ -179,8 +182,8 @@ void main()
   shapeInit();
   p2sw_init(15);
   shapeInit();
-  layerInit(&layer2);
-  layerDraw(&layer2);
+  layerInit(&layer0);
+  layerDraw(&layer0);
   layerGetBounds(&fieldLayer, &fieldFence);
   enableWDTInterrupts();      /**< enable periodic interrupt */
   or_sr(0x8);	              /**< GIE (enable interrupts) */
@@ -193,13 +196,13 @@ void main()
       P1OUT &= ~GREEN_LED;    /**< Green led off witHo CPU */
       or_sr(0x10);	      /**< CPU OFF */
     }
-    if(score1)
-      drawChar5x7(59,0,'0'+score2,COLOR_BLUE, COLOR_WHITE);
-    if(score2)
-      drawChar5x7(63,152,'0'+score1,COLOR_BLUE, COLOR_WHITE);
+    if(pong1)
+      drawChar5x7(59,0,'0'+ pong2,COLOR_BLUE, COLOR_WHITE);
+    if(pong2)
+      drawChar5x7(63,152,'0'+ pong1,COLOR_BLUE, COLOR_WHITE);
     P1OUT |= GREEN_LED;       /**< Green led on when CPU on */
     redrawScreen = 0;
-    movLayerDraw(&ml2, &layer2);
+    movLayerDraw(&ml2, &layer0);
   }
 }
 
