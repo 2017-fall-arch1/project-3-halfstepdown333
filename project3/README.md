@@ -1,4 +1,4 @@
-# ACME TOY -Project 2- Arch1 
+# Mr.Ping Pong -Project 3- Arch1 
 
 This directory contains:
 * code that implements a pong game, sound and buttons 
