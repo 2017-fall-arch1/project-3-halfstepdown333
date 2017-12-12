@@ -1,36 +1,28 @@
-	.file	"switch.c"
+	.data
+count:	.word 0; count=0
+
 	.text
-	.p2align 4,,15
-	.globl	switchBeep
-	.type	switchBeep, @function
+
+SP:	.word case1
+	.word case2
+
+	.global switchBeep
+
 switchBeep:
-.LFB0:
-	.cfi_startproc
-	movl	4(%esp), %eax
-	cmpl	$1, %eax
-	je	.L3
-	cmpl	$2, %eax
-	jne	.L7
-	movl	$2000, 4(%esp)
-	jmp	buzzer_set_period
-	.p2align 4,,10
-	.p2align 3
-.L7:
-	rep ret
-	.p2align 4,,10
-	.p2align 3
-.L3:
-	movl	$1000, 4(%esp)
-	jmp	buzzer_set_period
-	.cfi_endproc
-.LFE0:
-	.size	switchBeep, .-switchBeep
-	.globl	x
-	.bss
-	.align 4
-	.type	x, @object
-	.size	x, 4
-x:
-	.zero	4
-	.ident	"GCC: (GNU) 7.1.1 20170622 (Red Hat 7.1.1-3)"
-	.section	.note.GNU-stack,"",@progbits
+	mov &count, r12
+	add #1,r12
+	mov SP(r12),r0
+
+case1:
+	mov #1000,r12
+	call #buzzer_set_period;
+	add #1,&count;
+	jmp break
+
+case2:
+	mov #2000,r12
+	call #buzzer_set_period;
+	add #1,&count;
+	jmp break
+break:
+	pop r0
